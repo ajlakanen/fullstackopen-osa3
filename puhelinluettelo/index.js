@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 
+const BASEURL = "/api/persons";
+
 let persons = [
   {
     id: 1,
@@ -29,11 +31,11 @@ app.get("/", (req, res) => {
   res.send("<h1>Hello Worldss!</h1>");
 });
 
-app.get("/api/persons", (req, res) => {
+app.get(`${BASEURL}`, (req, res) => {
   res.json(persons);
 });
 
-app.get("/api/persons/:id", (request, response) => {
+app.get(`${BASEURL}/:id`, (request, response) => {
   const id = Number(request.params.id);
   const person = persons.find((p) => {
     return p.id === id;
@@ -58,7 +60,8 @@ const generateId = () => {
   return Math.floor(1000 * Math.random());
 };
 
-app.post("/api/persons", (request, response) => {
+app.post(`${BASEURL}`, (request, response) => {
+  console.log("post");
   const body = request.body;
   if (!body.name || !body.number) {
     response.status(400).json({
@@ -66,6 +69,13 @@ app.post("/api/persons", (request, response) => {
     });
     return;
   }
+  if (persons.find((p) => p.name === body.name)) {
+    response.status(400).json({
+      error: "name must be unique",
+    });
+    return;
+  }
+
   console.log(request.get("Content-Type"));
   const person = {
     name: body.name,
@@ -76,7 +86,7 @@ app.post("/api/persons", (request, response) => {
   response.json(person);
 });
 
-app.delete("/api/persons/:id", (request, response) => {
+app.delete(`${BASEURL}/:id`, (request, response) => {
   const id = Number(request.params.id);
   persons = persons.filter((p) => p.id !== id);
   response.status(204).end();
