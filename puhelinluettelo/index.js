@@ -52,6 +52,30 @@ app.get("/info", (req, res) => {
   );
 });
 
+const generateId = () => {
+  //const maxId = notes.length > 0 ? Math.max(...notes.map((n) => n.id)) : 0;
+  //return maxId + 1;
+  return Math.floor(1000 * Math.random());
+};
+
+app.post("/api/persons", (request, response) => {
+  const body = request.body;
+  if (!body.name || !body.number) {
+    response.status(400).json({
+      error: "name or number missing",
+    });
+    return;
+  }
+  console.log(request.get("Content-Type"));
+  const person = {
+    name: body.name,
+    number: body.number,
+    id: generateId(),
+  };
+  persons = persons.concat(person);
+  response.json(person);
+});
+
 app.delete("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
   persons = persons.filter((p) => p.id !== id);
