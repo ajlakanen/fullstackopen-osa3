@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import Note from "./components/Note";
 import noteService from "./services/notes";
 
@@ -7,7 +6,7 @@ const App = (props) => {
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState("a new note...");
   const [showAll, setShowAll] = useState(true);
-  const notesURL = "http://localhost:3002/notes";
+  const notesURL = "http://localhost:3001/api/notes";
 
   useEffect(() => {
     //axios.get("http://localhost:3002/notes").then((response) => {
