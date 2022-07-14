@@ -1,6 +1,16 @@
 const express = require("express");
+const morgan = require("morgan");
 const app = express();
 app.use(express.json());
+app.use(morgan("tiny", { skip: (req, res) => req.method === "POST" }));
+
+morgan.token("data", (req) => JSON.stringify(req.body));
+app.use(
+  morgan(
+    ":method :url :status :res[content-length] - :response-time ms :data",
+    { skip: (req, res) => req.method !== "POST" }
+  )
+);
 
 const BASEURL = "/api/persons";
 
@@ -61,7 +71,6 @@ const generateId = () => {
 };
 
 app.post(`${BASEURL}`, (request, response) => {
-  console.log("post");
   const body = request.body;
   if (!body.name || !body.number) {
     response.status(400).json({
@@ -76,7 +85,7 @@ app.post(`${BASEURL}`, (request, response) => {
     return;
   }
 
-  console.log(request.get("Content-Type"));
+  // console.log(request.get("Content-Type"));
   const person = {
     name: body.name,
     number: body.number,
